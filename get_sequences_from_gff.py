@@ -4,35 +4,35 @@ from collections import defaultdict
 import argparse
 import sys
 
-parser = argparse.ArgumentParser(description='Extract gene sequences from gff and genome files.')
+parser = argparse.ArgumentParser(description='Extracts gene sequences from gff and genome files and adds the promoter sequence.')
 
 parser.add_argument('gff_file', type=str,
 					help='Input annotation (gff) file with sequences of the target genes.')
 					
-parser.add_argument('fasta_file', type=str,
+parser.add_argument('genome_file', type=str,
 					help='Input genome file.')
 
 parser.add_argument('--outname', '-o', type=str, default="target_genes",
-					help='Base name of the output files. The .fasta extension will be appended to this. '
-					'(Default: target_genes.')
+					help='Base name of the output files.'
+					'(Default: target_genes.)')
 
 parser.add_argument('--promoter', '-p', default=50, type=int,
 					help='Length before the gene start to be considered as the promoter. (Default: 50)')
 
-parser.add_argument('--genetype', '-t', type=str,
+parser.add_argument('--genetype', '-g', type=str,
 					help='Consider only genes of this type (Third column of the gff file).')			
 
 parser.add_argument('--attribute', '-a', type=str,
-					help='Consider only genes that have this attribute (ninth column of the gff file).'
-					'E.g. if you want to filter for the attribute "sRNA_type=Intergenic" write'
+					help='Consider only genes that have this string in the attributes column (ninth column of the gff file).'
+					'E.g. if you want to filter for the attribute "sRNA_type=Intergenic", write '
 					'sRNA_type=Intergenic.')
 
 parser.add_argument('--name', '-n', type=str, default="locus_tag",
-					help='Take gene name from this attribute of the gff attribute column (ninth column of the gff file)')	
+					help='Take gene name from this attribute of the gff attribute column (ninth column of the gff file).')	
 					
 args = parser.parse_args()
 gff_file = args.gff_file
-genome_file = args.fasta_file
+genome_file = args.genome_file
 outname = args.outname
 promoter_length = args.promoter
 genetype = args.genetype
@@ -75,11 +75,11 @@ for line in input_file:
 		sys.exit()
 	strand = linelist[6]
 	if strand == "+":
-		start = str(int(linelist[3]) - promoter_length - 6)
-		end = str(int(linelist[4]) + 6)
+		start = str(int(linelist[3]) - promoter_length)
+		end = str(int(linelist[4]))
 	elif strand == "-":
-		end = str(int(linelist[4]) + promoter_length + 6)
-		start = str(int(linelist[3]) - 6)
+		end = str(int(linelist[4]) + promoter_length)
+		start = str(int(linelist[3]))
 	genes[gene] = [seqname,start,end,strand]
 
 with open("{}_coordinates.txt".format(outname), mode="w") as outf:
