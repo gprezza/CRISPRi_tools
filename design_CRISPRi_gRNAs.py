@@ -29,7 +29,7 @@ parser.add_argument('--spacer_length', '-sl', default="20", type=int,
 					help='Length of each spacer. No more than 26 if the -a flag is used. (Default: 20)')
 					
 parser.add_argument('--promoter_length', '-pl', default="50", type=int,
-					help='Length of the promoter region. (Default: 50)')
+					help='Length of the promoter region. Set to 0 if you want to avoid targeting the promoter. (Default: 50)')
 	
 parser.add_argument('--non_targeting', '-nt', help='The script designs nontargeting gRNAs if this flag is present. '
 					'If only -nt is set, the number of designed nontargeting gRNAs is the largest number between '
@@ -254,7 +254,7 @@ def bestspacers(spacers,n,offt):
 	for spacer in spacers:
 		#score spacer:
 		all_stretches = 0
-		seq = spacer["seq"][:20]
+		seq = spacer["seq"][:spacer_length]
 		for x in stretches:
 			stretches_no = 0
 			indexes = find_all(seq, x)
@@ -282,7 +282,10 @@ def bestspacers(spacers,n,offt):
 		else:
 			score = calc_spacerScore(GC,all_stretches,position,None) #score of the spacer
 		spacer["score"] = score
-	spacers = sorted(spacers, key = lambda x: x["score"],reverse=True) #sort by decreasing score
+	spacers = sorted(spacers, key=lambda x: (-x['score'], x['start'])) #sort by decreasing score. Spacers with an
+																	#equal score are sorted by increasing start 
+																	#position, so that those closer to the gene
+																	#start are prioritized.
 	best_spacers.append(spacers[0]) #append spacer with the highest score
 	i = 1
 	while len(best_spacers) < n:
@@ -318,21 +321,7 @@ def calc_spacerScore(GC,stretch,position,PAMletter):
 		#if inside the promoter (extended by overlap_window)
 		position_score = 10
 	else:
-		#calculate position as percentage inside the coding sequence
-		n = promoter_length + overlap_window
-		position = (position-n)*100/(gene_length-n) 
-		if 0 <= position <= 50:
-			position_score = 9
-		elif 50 < position <= 60:
-			position_score = 7
-		elif 60 < position <= 70:
-			position_score = 4
-		elif 70 < position <= 80:
-			position_score = 3
-		elif 80 < position <= 90:
-			position_score = 2
-		elif 90 < position <= 100:
-			position_score = 1
+		position_score = 1
 	PAM_score = 5
 	if PAMletter == "T":
 		PAM_score = 10
@@ -480,7 +469,7 @@ def offtarget(list_of_PAMs,target_strand,spacer_id):
 						break
 			#look for the spacer in the spacers dictionary and remove it
 			for spacer in all_spacers_dic[thisgene]:
-				if spacer["seq"][:20] == seq and spacer["strand"] == target_strand:
+				if spacer["seq"][:spacer_length] == seq and spacer["strand"] == target_strand:
 					all_spacers_dic[thisgene].remove(spacer) #remove the spacer
 					if row[5] != "": #if there are mismatches between the offtarget site and the spacer
 						mismatches = 1/(len(row[5].split(","))+1)

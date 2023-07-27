@@ -1,0 +1,9 @@
+v1.0.1 (2013-07-27)
+- design_CRISPRi_gRNAs.py: Fix spacer prioritizing by score, so that at parity of score, spacer closer to the gene's 5'end are picked.  
+- design_CRISPRi_gRNAs.py: Fix some hardcoded spacer_length.
+- Update README.md
+- Add CHANGELOG.txt
+v1.0.0 (2023-06-30)
+- Published version, added PAM flexibility, strand-specificity option and many other things.
+v0.1.0 (2013-06-29)
+- Original version of the tools run to design the library used in the paper. Lots of hardcoded stuff, should not be used for any other purpose.

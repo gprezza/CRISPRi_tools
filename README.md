@@ -32,7 +32,8 @@ optional arguments:
                         will be appended to this. (Default: target_genes.)
   --promoter PROMOTER, -p PROMOTER
                         Length before the gene start to be considered as the
-                        promoter. (Default: 50)
+                        promoter. Set to 0 if you want to avoid targeting the
+						promoter. (Default: 50)
   --genetype GENETYPE, -t GENETYPE
                         Consider only genes of this type (Third column of the
                         gff file).
@@ -116,7 +117,7 @@ optional arguments:
   --spacer_length SPACER_LENGTH, -sl SPACER_LENGTH
                         Length of each spacer. No more than 26 if the -a flag is used. (Default: 20)
   --promoter_length PROMOTER_LENGTH, -pl PROMOTER_LENGTH
-                        Length of the promoter region. (Default: 50)
+                        Length of the promoter region. Set to 0 if you want to avoid targeting the promoter. (Default: 50)
   --non_targeting [NON_TARGETING], -nt [NON_TARGETING]
                         The script designs nontargeting gRNAs if this flag is present. If only -nt is set, the number of designed nontargeting gRNAs is the largest number
                         between 20 and total number of gRNAs divided by 2. If -nt n is set, the script designs n nontargeting gRNAs.
