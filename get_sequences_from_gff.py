@@ -16,9 +16,9 @@ parser.add_argument('--outname', '-o', type=str, default="target_genes",
 					help='Base name of the output files.'
 					'(Default: target_genes.)')
 
-parser.add_argument('--promoter', '-p', default=50, type=int,
-					help='Length before the gene start to be considered as the promoter. Set to 0 if you want to avoid targeting '
-					'the promoter. (Default: 50)')
+parser.add_argument('--promoter', '-p', default=0, type=int,
+					help='Length before the gene start to be considered as the promoter. Keep to 0 if you want to avoid targeting '
+					'the promoter or if you\'re not sure where the promoter is. (Default: 0)')
 
 parser.add_argument('--genetype', '-g', type=str,
 					help='Consider only genes of this type (Third column of the gff file).')			

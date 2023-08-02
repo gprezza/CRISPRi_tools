@@ -32,8 +32,9 @@ optional arguments:
                         will be appended to this. (Default: target_genes.)
   --promoter PROMOTER, -p PROMOTER
                         Length before the gene start to be considered as the
-                        promoter. Set to 0 if you want to avoid targeting the
-						promoter. (Default: 50)
+                        promoter. Keep to 0 if you want to avoid targeting the
+                        promoter or if you're not sure where the promoter is.
+                        (Default: 0)
   --genetype GENETYPE, -t GENETYPE
                         Consider only genes of this type (Third column of the
                         gff file).
@@ -89,7 +90,7 @@ optional arguments:
 * *PAM_frequency_heatmap.pdf*: Heatmap with the same results, binned in bins of size set by *--binsize*.
 
 ## design_CRISPRi_gRNAs.py
-This script designs the gRNA/array library. PAM sequence (*--PAM*), strand preference inside the transcribed region (*PAM_preference*) and orientation respective to the protospacer (*--PAM_orientation*) can be freely set. gRNAs in the promoter can target both strands.
+This script designs the gRNA/array library. PAM sequence (*--PAM*), strand preference inside the transcribed region (*PAM_preference*) and orientation respective to the protospacer (*--PAM_orientation*) can be freely set. gRNAs in the promoter can target both strands. Note that in the case of CDSs, the region immediately upstream the annotated start is not the promoter, but the 5-UTR and/or an upstream gene in the same operon. For these genes, unless the transcription start site is known, it's highly recommended to set *--promoter_length* to 0, to avoid gRNAs being designed for both strands on a region that is not the promoter.
 
 For Cas12a, the script can design 1 array per gene if the *--arrays* flag is set. In this case, the oligonucleotides designed for the arrays are structured for cloning via CRATES (PMID: 31270316). The default *--left_overlap* and *--right_overlap* overlap sequences are for cloning into AWP-029.
 
@@ -99,44 +100,71 @@ This script support multiprocessing (*--processors*), however >1 processors are 
 ### Usage
 
 ```
-usage: design_CRISPRi_gRNAs.py [-h] [--input_file INPUT_FILE] [--coordinates COORDINATES] [--reference REFERENCE] [--spacer_length SPACER_LENGTH]
-                               [--promoter_length PROMOTER_LENGTH] [--non_targeting [NON_TARGETING]] [--PAM PAM] [--PAM_preference {template,nontemplate}]
-                               [--PAM_orientation {5prime,3prime}] [--spacers SPACERS] [--arrays] [--folding FOLDING] [--left_overlap LEFT_OVERLAP]
-                               [--right_overlap RIGHT_OVERLAP] [--processors PROCESSORS]
+usage: design_CRISPRi_gRNAs.py [-h] [--input_file INPUT_FILE]
+                               [--coordinates COORDINATES]
+                               [--reference REFERENCE]
+                               [--spacer_length SPACER_LENGTH]
+                               [--promoter_length PROMOTER_LENGTH]
+                               [--non_targeting [NON_TARGETING]] [--PAM PAM]
+                               [--PAM_preference {template,nontemplate}]
+                               [--PAM_orientation {5prime,3prime}]
+                               [--spacers SPACERS] [--arrays]
+                               [--folding FOLDING]
+                               [--left_overlap LEFT_OVERLAP]
+                               [--right_overlap RIGHT_OVERLAP]
+                               [--processors PROCESSORS]
 
 Designs spacers targeting the input genes.
 
 optional arguments:
   -h, --help            show this help message and exit
   --input_file INPUT_FILE, -i INPUT_FILE
-                        Fasta file with sequences of the target genes + promoters. (Default: target_genes_sequences.fasta)
+                        Fasta file with sequences of the target genes +
+                        promoters. (Default: target_genes_sequences.fasta)
   --coordinates COORDINATES, -c COORDINATES
-                        File with coordinates of the target genes. (Default: target_genes_coordinates.txt)
+                        File with coordinates of the target genes. (Default:
+                        target_genes_coordinates.txt)
   --reference REFERENCE, -r REFERENCE
                         Genome sequence file (Default: genome.fasta).
   --spacer_length SPACER_LENGTH, -sl SPACER_LENGTH
-                        Length of each spacer. No more than 26 if the -a flag is used. (Default: 20)
+                        Length of each spacer. No more than 26 if the -a flag
+                        is used. (Default: 20)
   --promoter_length PROMOTER_LENGTH, -pl PROMOTER_LENGTH
-                        Length of the promoter region. Set to 0 if you want to avoid targeting the promoter. (Default: 50)
+                        Length of the promoter region. Keep to 0 if you want
+                        to avoid targeting the promoter or if you're not sure
+                        where the promoter is. (Default: 0)
   --non_targeting [NON_TARGETING], -nt [NON_TARGETING]
-                        The script designs nontargeting gRNAs if this flag is present. If only -nt is set, the number of designed nontargeting gRNAs is the largest number
-                        between 20 and total number of gRNAs divided by 2. If -nt n is set, the script designs n nontargeting gRNAs.
+                        The script designs nontargeting gRNAs if this flag is
+                        present. If only -nt is set, the number of designed
+                        nontargeting gRNAs is the largest number between 20
+                        and total number of gRNAs divided by 2. If -nt n is
+                        set, the script designs n nontargeting gRNAs.
   --PAM PAM, -pam PAM   PAM sequence. (Default: TTV)
   --PAM_preference {template,nontemplate}, -pp {template,nontemplate}
-                        Which strand within the coding region should be targeted? (Default: template)
+                        Which strand within the coding region should be
+                        targeted? (Default: template)
   --PAM_orientation {5prime,3prime}, -po {5prime,3prime}
-                        At which end of the protospacer is the PAM located? (Default: 5prime)
+                        At which end of the protospacer is the PAM located?
+                        (Default: 5prime)
   --spacers SPACERS, -s SPACERS
-                        Number of spacers (including one array if using the -a flag) to be designed per targeted gene. (Default: 4)
-  --arrays, -a          The script attempts to design one array per target gene if this flag is present. This flag can be used only if --PAM is TTV.
+                        Number of spacers (including one array if using the -a
+                        flag) to be designed per targeted gene. (Default: 4)
+  --arrays, -a          The script attempts to design one array per target
+                        gene if this flag is present. This flag can be used
+                        only if --PAM is TTV.
   --folding FOLDING, -f FOLDING
-                        Minimal accepted correct folding probability of the arrays. Scale: 0-1. (Default: 0.2)
+                        Minimal accepted correct folding probability of the
+                        arrays. Scale: 0-1. (Default: 0.2)
   --left_overlap LEFT_OVERLAP, -lo LEFT_OVERLAP
-                        Left overhang for cloning grna spacers. (Default: atctttgcagtaatttctactgttgtagat)
+                        Left overhang for cloning grna spacers. (Default:
+                        atctttgcagtaatttctactgttgtagat)
   --right_overlap RIGHT_OVERLAP, -ro RIGHT_OVERLAP
-                        Right overhang for cloning grna spacers. (Default: ccggcttatcggtcagtttcacctgattta)
+                        Right overhang for cloning grna spacers. (Default:
+                        ccggcttatcggtcagtttcacctgattta)
   --processors PROCESSORS, -p PROCESSORS
-                        Number of processors. A real impact of using >1 processors is seen only when also using the -a option. (Default: 1)
+                        Number of processors. A real impact of using >1
+                        processors is seen only when also using the -a option.
+                        (Default: 1)
 ```
 
 ### Input

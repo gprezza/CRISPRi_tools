@@ -28,8 +28,9 @@ parser.add_argument('--reference', '-r', type=str, default="genome.fasta", help=
 parser.add_argument('--spacer_length', '-sl', default="20", type=int,
 					help='Length of each spacer. No more than 26 if the -a flag is used. (Default: 20)')
 					
-parser.add_argument('--promoter_length', '-pl', default="50", type=int,
-					help='Length of the promoter region. Set to 0 if you want to avoid targeting the promoter. (Default: 50)')
+parser.add_argument('--promoter_length', '-pl', default="0", type=int,
+					help='Length of the promoter region. Keep to 0 if you want to avoid targeting the promoter or '
+					'if you\'re not sure where the promoter is. (Default: 0)')
 	
 parser.add_argument('--non_targeting', '-nt', help='The script designs nontargeting gRNAs if this flag is present. '
 					'If only -nt is set, the number of designed nontargeting gRNAs is the largest number between '
