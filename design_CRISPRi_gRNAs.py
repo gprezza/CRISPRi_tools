@@ -607,7 +607,7 @@ for gene_id, selectedspacers in all_spacers_dic.items():
 		seq = spacer["seq"][:spacer_length] #look only for offtargets in the spacer_length part of the spacer
 		strand = spacer["strand"]
 		bowtie_in.write(">")
-		bowtie_in.write("{0}_{1}_{2}".format(gene_id, i,strand)) #ID of the fasta entry: targeted gene + _i + _targetedstrand
+		bowtie_in.write("{0} {1} {2}".format(gene_id, i,strand)) #ID of the fasta entry: targeted gene + i + targetedstrand
 		bowtie_in.write("\n")
 		bowtie_in.write(seq) #spacer sequence
 		bowtie_in.write("\n")
@@ -648,7 +648,7 @@ rowlist = sorted(rowlist, key = lambda x: x[0]) # sort alphabetically by spacer 
 												# we can stop at the first offtarget of a spacer
 for row in rowlist:
 	thisspacer = row[0]
-	(thisgene, _, target_strand) = thisspacer.split("_")
+	(thisgene, _, target_strand) = thisspacer.split(" ")
 	strand = row[1]
 	scaffold = row[2] #chromosome or plasmid ID
 	index = int(row[3]) #starting index of off-target
