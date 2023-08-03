@@ -137,7 +137,7 @@ optional arguments:
                         The script designs nontargeting gRNAs if this flag is
                         present. If only -nt is set, the number of designed
                         nontargeting gRNAs is the largest number between 20
-                        and total number of gRNAs divided by 2. If -nt n is
+                        and total number of gRNAs divided by 100. If -nt n is
                         set, the script designs n nontargeting gRNAs.
   --PAM PAM, -pam PAM   PAM sequence. (Default: TTV)
   --PAM_preference {template,nontemplate}, -pp {template,nontemplate}

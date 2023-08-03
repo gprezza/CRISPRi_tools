@@ -34,7 +34,7 @@ parser.add_argument('--promoter_length', '-pl', default="0", type=int,
 	
 parser.add_argument('--non_targeting', '-nt', help='The script designs nontargeting gRNAs if this flag is present. '
 					'If only -nt is set, the number of designed nontargeting gRNAs is the largest number between '
-					'20 and total number of gRNAs divided by 2. If -nt n is set, the script designs n nontargeting gRNAs.',
+					'20 and total number of gRNAs divided by 100. If -nt n is set, the script designs n nontargeting gRNAs.',
 					action='store',nargs='?',type=int,default=False,const=9999999)
 
 parser.add_argument('--PAM', '-pam', default="TTV", type=str, help='PAM sequence. (Default: TTV)')
