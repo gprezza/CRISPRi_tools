@@ -452,7 +452,7 @@ def offtarget(thisPAM,thisstrand,spacer_id):
 	global multitargeting
 	global offtargeting
 	multitarget = False
-	if any(thisPAM == PAM for PAM in list_of_PAMs):#check if PAM is a valid PAM
+	if any(thisPAM == PAM for PAM in all_PAMs):#check if PAM is a valid PAM
 		if "|" in thisgene: #if it's a group of genes having the same sequence
 			genes = thisgene.split("|")
 			for gene in genes:
