@@ -444,7 +444,7 @@ def score_arrays(arrays):
 	return scored_arrays				
 
 
-def offtarget(list_of_PAMs,target_strand,spacer_id):
+def offtarget(thisPAM,thisstrand,spacer_id):
 # checks if the offtarget (starting at index; with PAM coordinates start:end)
 # is followed by a PAM and if it's outside a targeted gene.
 # If so, it's considered as a bona-fide off target
@@ -452,7 +452,7 @@ def offtarget(list_of_PAMs,target_strand,spacer_id):
 	global multitargeting
 	global offtargeting
 	multitarget = False
-	if any(genome_seqs[scaffold][start:end] == PAM for PAM in list_of_PAMs):#check if PAM is a valid PAM
+	if any(thisPAM == PAM for PAM in list_of_PAMs):#check if PAM is a valid PAM
 		if "|" in thisgene: #if it's a group of genes having the same sequence
 			genes = thisgene.split("|")
 			for gene in genes:
@@ -470,7 +470,7 @@ def offtarget(list_of_PAMs,target_strand,spacer_id):
 						break
 			#look for the spacer in the spacers dictionary and remove it
 			for spacer in all_spacers_dic[thisgene]:
-				if spacer["seq"][:spacer_length] == seq and spacer["strand"] == target_strand:
+				if spacer["seq"][:spacer_length] == seq and spacer["strand"] == thisstrand:
 					all_spacers_dic[thisgene].remove(spacer) #remove the spacer
 					if row[5] != "": #if there are mismatches between the offtarget site and the spacer
 						mismatches = 1/(len(row[5].split(","))+1)
@@ -649,20 +649,34 @@ rowlist = sorted(rowlist, key = lambda x: x[0]) # sort alphabetically by spacer 
 												# we can stop at the first offtarget of a spacer
 for row in rowlist:
 	thisspacer = row[0]
-	(thisgene, _, target_strand) = thisspacer.split(" ")
+	(thisgene, _, thisstrand) = thisspacer.split(" ")
 	strand = row[1]
 	scaffold = row[2] #chromosome or plasmid ID
 	index = int(row[3]) #starting index of off-target
+	seq = row[4]
 	if strand == "-":
-		seq = revcomp(row[4])
-		start = index + spacer_length
-		end = index + spacer_length + PAM_length
-		offtarget(all_revcomp_PAMs,target_strand,thisspacer)
+		seq = revcomp(seq)
+	# get start and end positions of the PAM of the off-target and check if it's a valid PAM
+	# if it is, the off-target is a true one
+	if PAM_orientation == "5prime":
+		if strand == "+":
+			start = index - PAM_length
+			end = index
+			thisPAM = genome_seqs[scaffold][start:end]
+		else:
+			start = index + spacer_length
+			end = index + spacer_length + PAM_length
+			thisPAM = revcomp(genome_seqs[scaffold][start:end])
 	else:
-		seq = row[4]
-		start = index - PAM_length
-		end = index
-		offtarget(all_PAMs,target_strand,thisspacer)
+		if strand == "+":
+			start = index + spacer_length
+			end = index + spacer_length + PAM_length
+			thisPAM = genome_seqs[scaffold][start:end]
+		else:
+			start = index - PAM_length
+			end = index
+			thisPAM = revcomp(genome_seqs[scaffold][start:end])
+	offtarget(thisPAM,thisstrand,thisspacer)
 bowtie_in.close()
 bowtie_out.close()
 
