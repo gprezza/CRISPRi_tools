@@ -184,7 +184,7 @@ for i in range(len(y_labels)):
 
 # Customize, ticks, labels and titles
 plt.yticks(np.arange(len(y_labels)) + 0.5, y_labels)
-plt.xticks(np.arange(len(x_labels)) + 0.5, x_labels, rotation=0)
+plt.xticks(np.arange(len(x_labels)) + 0.5, x_labels, rotation=30, ha='right',rotation_mode='anchor')
 plt.colorbar(label='Number of gRNAs')
 plt.xlabel("Number of PAMs/gene")
 plt.gca().invert_yaxis()
