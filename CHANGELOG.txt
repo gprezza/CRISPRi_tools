@@ -1,6 +1,10 @@
+v1.0.3 (2013-09-06)
+- design_CRISPRi_gRNAs.py: fix offtarget search for 3prime PAMs
+- PAM_frequency.py: add rotation of x labels in PAM plot
+- update Readme
 v1.0.2 (2013-08-02)
 - design_CRISPRi_gRNAs.py: fix error when gene names contain an underscore.
-- design_CRISPRi_gRNAs.py, get_sequences_from_gff.py: set default promoter length to 0.
+- design_CRISPRi_gRNAs.py: get_sequences_from_gff.py: set default promoter length to 0.
 - Update Readme.md
 v1.0.1 (2013-07-27)
 - design_CRISPRi_gRNAs.py: Fix spacer prioritizing by score, so that at parity of score, spacer closer to the gene's 5'end are picked.  
